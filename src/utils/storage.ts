@@ -75,14 +75,35 @@ export function exportAllData(): string {
     recipes: loadLearnedRecipes(),
     turnips: loadTurnipData(),
   };
-  return btoa(JSON.stringify(data));
+  // Use TextEncoder to handle Unicode safely
+  const bytes = new TextEncoder().encode(JSON.stringify(data));
+  let binary = '';
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary);
+}
+
+const CATEGORIES: Category[] = ['fish', 'bugs', 'sea', 'fossils', 'art'];
+
+function isValidCollection(col: CollectionState): boolean {
+  if (typeof col.hemisphere !== 'string') return false;
+  for (const cat of CATEGORIES) {
+    if (!Array.isArray(col.caught?.[cat])) return false;
+    if (!Array.isArray(col.donated?.[cat])) return false;
+    if (!col.caught[cat].every((id: unknown) => typeof id === 'string')) return false;
+    if (!col.donated[cat].every((id: unknown) => typeof id === 'string')) return false;
+  }
+  return true;
 }
 
 export function importAllData(code: string): SyncData | null {
   try {
-    const json = atob(code.trim());
+    const binary = atob(code.trim());
+    // Use TextDecoder to handle Unicode safely
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    const json = new TextDecoder().decode(bytes);
     const data = JSON.parse(json) as SyncData;
-    if (!data.collection?.caught || !data.collection?.donated) return null;
+    if (!data.collection || !isValidCollection(data.collection)) return null;
+    if (data.recipes && !Array.isArray(data.recipes)) return null;
     // Apply everything
     saveCollection({ ...data.collection, version: CURRENT_VERSION });
     saveLearnedRecipes(data.recipes || []);
