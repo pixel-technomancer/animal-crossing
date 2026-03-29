@@ -16,9 +16,9 @@ export function loadCollection(): CollectionState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return getDefaultState();
-    const parsed = JSON.parse(raw) as CollectionState;
-    if (parsed.version !== CURRENT_VERSION) return getDefaultState();
-    return parsed;
+    const parsed = JSON.parse(raw);
+    if (parsed.version !== CURRENT_VERSION || !isValidCollection(parsed)) return getDefaultState();
+    return parsed as CollectionState;
   } catch {
     return getDefaultState();
   }
