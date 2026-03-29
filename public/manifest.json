@@ -1,6 +1,6 @@
 {
-  "name": "Pixel's Guide",
-  "short_name": "Pixel's Guide",
+  "name": "Player's Guide",
+  "short_name": "Player's Guide",
   "description": "Interactive Animal Crossing: New Horizons companion guide",
   "start_url": "./",
   "display": "standalone",
