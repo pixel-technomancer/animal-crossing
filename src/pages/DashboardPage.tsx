@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Pencil } from 'lucide-react';
 import type { Creature, Hemisphere, Category } from '../types/common';
 import { CATEGORY_INFO } from '../types/common';
 import { isAvailableNow, isLeavingThisMonth, isNewThisMonth } from '../utils/availability';
@@ -54,6 +55,17 @@ export function DashboardPage({
 
   const month = new Date().toLocaleString('en-US', { month: 'long' });
 
+  const [islandName, setIslandName] = useState(() => localStorage.getItem('acnh-island-name') || '');
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(islandName);
+
+  const saveIslandName = () => {
+    const trimmed = draft.trim();
+    setIslandName(trimmed);
+    localStorage.setItem('acnh-island-name', trimmed);
+    setEditing(false);
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome */}
@@ -62,8 +74,33 @@ export function DashboardPage({
         animate={{ opacity: 1, y: 0 }}
         className="bg-gradient-to-br from-leaf-light/30 via-sky-light/20 to-golden/10 rounded-[20px] p-6 border border-leaf/10"
       >
-        <h2 className="text-2xl font-extrabold text-brown-dark font-heading">
-          Welcome to Pirate Bay Island! 🏴‍☠️
+        <h2 className="text-2xl font-extrabold text-brown-dark font-heading flex items-center gap-2 flex-wrap">
+          {editing ? (
+            <span className="flex items-center gap-2">
+              Welcome to{' '}
+              <input
+                autoFocus
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onBlur={saveIslandName}
+                onKeyDown={(e) => { if (e.key === 'Enter') saveIslandName(); if (e.key === 'Escape') { setDraft(islandName); setEditing(false); } }}
+                placeholder="Your Island"
+                className="bg-white/60 border border-leaf/30 rounded-lg px-2 py-0.5 text-2xl font-extrabold text-brown-dark font-heading w-48 focus:outline-none focus:ring-2 focus:ring-leaf/40"
+              />
+              {' '}Island! 🏝️
+            </span>
+          ) : (
+            <>
+              Welcome{islandName ? ` to ${islandName} Island` : ''}! 🏝️
+              <button
+                onClick={() => { setDraft(islandName); setEditing(true); }}
+                className="text-brown-light hover:text-brown-dark transition-colors cursor-pointer"
+                title={islandName ? 'Edit island name' : 'Set your island name'}
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            </>
+          )}
         </h2>
         <p className="text-brown mt-2 font-medium">
           It's <span className="font-bold text-leaf-dark">{month}</span>. Here's what you can find right now.

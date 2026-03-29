@@ -34,15 +34,16 @@ function createWindow() {
   if (isDev) {
     win.loadURL('http://localhost:5173');
   } else {
-    const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
-    console.log('Loading:', indexPath);
-    console.log('Exists:', fs.existsSync(indexPath));
-    win.loadFile(indexPath);
-  }
+    win.loadURL('https://pixel-technomancer.github.io/animal-crossing/');
 
-  win.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
-    console.error('Failed to load:', errorCode, errorDescription);
-  });
+    // Fall back to bundled files if offline
+    win.webContents.on('did-fail-load', () => {
+      const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
+      if (fs.existsSync(indexPath)) {
+        win.loadFile(indexPath);
+      }
+    });
+  }
 }
 
 app.whenReady().then(createWindow);

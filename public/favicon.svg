@@ -1,12 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <circle cx="50" cy="50" r="48" fill="#78C257"/>
-  <ellipse cx="50" cy="48" rx="22" ry="26" fill="#fff"/>
-  <polygon points="44,26 50,12 56,26" fill="#fff"/>
-  <line x1="50" y1="16" x2="50" y2="72" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="50" y1="35" x2="36" y2="28" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="50" y1="35" x2="64" y2="28" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="50" y1="47" x2="34" y2="40" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="50" y1="47" x2="66" y2="40" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="50" y1="58" x2="38" y2="52" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="50" y1="58" x2="62" y2="52" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M50 20 C50 20 75 30 75 55 C75 70 63 80 50 80 C37 80 25 70 25 55 C25 30 50 20 50 20Z" fill="#fff" stroke="none"/>
+  <line x1="50" y1="28" x2="50" y2="78" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M50 42 Q38 38 32 45" fill="none" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M50 52 Q62 48 68 55" fill="none" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M50 62 Q38 58 33 65" fill="none" stroke="#4A7C3F" stroke-width="1.8" stroke-linecap="round"/>
 </svg>

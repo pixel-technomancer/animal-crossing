@@ -34,7 +34,7 @@ export function Header({ onDataImported }: HeaderProps) {
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-brown-dark font-heading leading-tight tracking-tight">
-              Pixel's Guide
+              Player's Guide
             </h1>
             <p className="text-xs text-brown-light font-medium">
               Animal Crossing Companion

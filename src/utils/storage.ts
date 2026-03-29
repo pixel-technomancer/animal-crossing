@@ -67,13 +67,17 @@ export interface SyncData {
   collection: CollectionState;
   recipes: string[];
   turnips: unknown;
+  islandName?: string;
 }
+
+const ISLAND_NAME_KEY = 'acnh-island-name';
 
 export function exportAllData(): string {
   const data: SyncData = {
     collection: loadCollection(),
     recipes: loadLearnedRecipes(),
     turnips: loadTurnipData(),
+    islandName: localStorage.getItem(ISLAND_NAME_KEY) || undefined,
   };
   // Use TextEncoder to handle Unicode safely
   const bytes = new TextEncoder().encode(JSON.stringify(data));
@@ -108,6 +112,7 @@ export function importAllData(code: string): SyncData | null {
     saveCollection({ ...data.collection, version: CURRENT_VERSION });
     saveLearnedRecipes(data.recipes || []);
     saveTurnipData(data.turnips);
+    if (data.islandName) localStorage.setItem(ISLAND_NAME_KEY, data.islandName);
     return data;
   } catch {
     return null;
