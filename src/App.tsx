@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useReducer } from 'react';
 import { Header } from './components/layout/Header';
 import { Navigation } from './components/layout/Navigation';
 import type { Page } from './components/layout/Navigation';
@@ -11,7 +11,7 @@ import { ArtPage } from './pages/ArtPage';
 import { RecipesPage } from './pages/RecipesPage';
 import { TurnipsPage } from './pages/TurnipsPage';
 import { TipsPage } from './pages/TipsPage';
-import { loadLearnedRecipes, saveLearnedRecipes, toggleLearnedRecipe } from './utils/storage';
+import { loadCollection, loadLearnedRecipes, saveLearnedRecipes, toggleLearnedRecipe } from './utils/storage';
 import type { Category } from './types/common';
 
 function App() {
@@ -19,6 +19,14 @@ function App() {
   const { fish, bugs, sea, fossils, art, recipes, loading } = useCreatureData();
   const collection = useCollection();
   const [learnedRecipes, setLearnedRecipes] = useState(loadLearnedRecipes);
+  const [, forceReload] = useReducer((x: number) => x + 1, 0);
+
+  const handleDataImported = useCallback(() => {
+    // Reload all state from localStorage after import
+    collection.setState(loadCollection());
+    setLearnedRecipes(loadLearnedRecipes());
+    forceReload();
+  }, [collection]);
 
   const handleToggleLearnedRecipe = useCallback((id: string) => {
     setLearnedRecipes((prev) => {
@@ -160,6 +168,7 @@ function App() {
       <Header
         hemisphere={collection.hemisphere}
         onHemisphereChange={collection.setHemisphere}
+        onDataImported={handleDataImported}
       />
       <Navigation
         activePage={activePage}

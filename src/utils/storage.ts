@@ -63,21 +63,54 @@ export function setHemisphere(state: CollectionState, hemisphere: Hemisphere): C
   return { ...state, hemisphere };
 }
 
-export function exportCollection(state: CollectionState): string {
-  return JSON.stringify(state, null, 2);
+export interface SyncData {
+  collection: CollectionState;
+  recipes: string[];
+  turnips: unknown;
 }
 
-export function importCollection(json: string): CollectionState | null {
+export function exportAllData(): string {
+  const data: SyncData = {
+    collection: loadCollection(),
+    recipes: loadLearnedRecipes(),
+    turnips: loadTurnipData(),
+  };
+  return btoa(JSON.stringify(data));
+}
+
+export function importAllData(code: string): SyncData | null {
   try {
-    const parsed = JSON.parse(json) as CollectionState;
-    if (parsed.version && parsed.caught && parsed.donated) return parsed;
-    return null;
+    const json = atob(code.trim());
+    const data = JSON.parse(json) as SyncData;
+    if (!data.collection?.caught || !data.collection?.donated) return null;
+    // Apply everything
+    saveCollection({ ...data.collection, version: CURRENT_VERSION });
+    saveLearnedRecipes(data.recipes || []);
+    saveTurnipData(data.turnips);
+    return data;
   } catch {
     return null;
   }
 }
 
+export function loadTurnipData(): unknown {
+  try {
+    const raw = localStorage.getItem(TURNIPS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export function saveTurnipData(data: unknown): void {
+  if (data) {
+    localStorage.setItem(TURNIPS_KEY, JSON.stringify(data));
+  }
+}
+
 const RECIPES_KEY = 'acnh-guide-recipes';
+const TURNIPS_KEY = 'acnh-turnip-data';
 
 export function loadLearnedRecipes(): string[] {
   try {

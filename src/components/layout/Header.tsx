@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Globe, Leaf } from 'lucide-react';
+import { Globe, Leaf, ArrowRightLeft } from 'lucide-react';
 import type { Hemisphere } from '../../types/common';
+import { SyncModal } from '../common/SyncModal';
 
 interface HeaderProps {
   hemisphere: Hemisphere;
   onHemisphereChange: (h: Hemisphere) => void;
+  onDataImported: () => void;
 }
 
-export function Header({ hemisphere, onHemisphereChange }: HeaderProps) {
+export function Header({ hemisphere, onHemisphereChange, onDataImported }: HeaderProps) {
   const [time, setTime] = useState(new Date());
+  const [showSync, setShowSync] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 60000);
@@ -50,6 +53,15 @@ export function Header({ hemisphere, onHemisphereChange }: HeaderProps) {
           </div>
 
           <button
+            onClick={() => setShowSync(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-golden/20 hover:bg-golden/30 text-golden-dark font-semibold text-sm transition-colors cursor-pointer"
+            title="Sync data between devices"
+          >
+            <ArrowRightLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Sync</span>
+          </button>
+
+          <button
             onClick={() =>
               onHemisphereChange(hemisphere === 'northern' ? 'southern' : 'northern')
             }
@@ -63,6 +75,12 @@ export function Header({ hemisphere, onHemisphereChange }: HeaderProps) {
           </button>
         </div>
       </div>
+      {showSync && (
+        <SyncModal
+          onClose={() => setShowSync(false)}
+          onImported={onDataImported}
+        />
+      )}
     </header>
   );
 }
