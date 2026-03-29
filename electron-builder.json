@@ -1,6 +1,6 @@
 {
-  "appId": "com.pixelsguide.app",
-  "productName": "Pixel's Guide",
+  "appId": "com.playersguide.app",
+  "productName": "Player's Guide",
   "directories": {
     "output": "release"
   },
