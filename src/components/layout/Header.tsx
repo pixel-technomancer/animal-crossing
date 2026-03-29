@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Globe, Leaf, ArrowRightLeft } from 'lucide-react';
+import { Leaf, ArrowRightLeft } from 'lucide-react';
 import type { Hemisphere } from '../../types/common';
 import { SyncModal } from '../common/SyncModal';
 
@@ -9,7 +9,7 @@ interface HeaderProps {
   onDataImported: () => void;
 }
 
-export function Header({ hemisphere, onHemisphereChange, onDataImported }: HeaderProps) {
+export function Header({ onDataImported }: HeaderProps) {
   const [time, setTime] = useState(new Date());
   const [showSync, setShowSync] = useState(false);
 
@@ -61,6 +61,7 @@ export function Header({ hemisphere, onHemisphereChange, onDataImported }: Heade
             <span className="hidden sm:inline">Sync</span>
           </button>
 
+          {/* Hemisphere toggle — hidden for now, hardcoded to northern
           <button
             onClick={() =>
               onHemisphereChange(hemisphere === 'northern' ? 'southern' : 'northern')
@@ -73,6 +74,7 @@ export function Header({ hemisphere, onHemisphereChange, onDataImported }: Heade
               {hemisphere === 'northern' ? 'Northern' : 'Southern'}
             </span>
           </button>
+          */}
         </div>
       </div>
       {showSync && (
