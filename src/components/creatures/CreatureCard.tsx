@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
 import type { Creature, Hemisphere } from '../../types/common';
 import { isAvailableNow, isLeavingThisMonth, isNewThisMonth } from '../../utils/availability';
@@ -31,11 +30,7 @@ export function CreatureCard({
   const name = creature.name['name-USen'];
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
+    <div
       className={`
         relative bg-white rounded-[16px] shadow-card hover:shadow-card-hover
         transition-all duration-200 overflow-hidden cursor-pointer group
@@ -115,6 +110,6 @@ export function CreatureCard({
           Museum
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

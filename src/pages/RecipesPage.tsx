@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useMemo, useCallback } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
 import type { Recipe, RecipeCategory } from '../types/common';
 
@@ -61,6 +61,24 @@ export function RecipesPage({ recipes, learned, onToggleLearned }: RecipesPagePr
     });
   }, [recipes, query, category, filterMode, learned]);
 
+  const BATCH_SIZE = 30;
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+
+  // Reset visible count when filters change
+  const filterKey = `${query}-${category}-${filterMode}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    setVisibleCount(BATCH_SIZE);
+  }
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  const showMore = useCallback(() => {
+    setVisibleCount((v) => Math.min(v + BATCH_SIZE, filtered.length));
+  }, [filtered.length]);
+
   const learnedCount = learned.length;
 
   return (
@@ -75,7 +93,7 @@ export function RecipesPage({ recipes, learned, onToggleLearned }: RecipesPagePr
         <div className="flex items-center gap-2 text-sm font-bold text-brown-dark">
           <span className="text-brown-light">Learned:</span>
           <span>{learnedCount}/{recipes.length}</span>
-          <span className="text-brown-light">({Math.round((learnedCount / recipes.length) * 100)}%)</span>
+          <span className="text-brown-light">({recipes.length ? Math.round((learnedCount / recipes.length) * 100) : 0}%)</span>
         </div>
       </div>
 
@@ -135,72 +153,78 @@ export function RecipesPage({ recipes, learned, onToggleLearned }: RecipesPagePr
 
       {/* Recipe grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((recipe) => {
-            const isLearned = learned.includes(recipe.id);
-            return (
-              <motion.div
-                key={recipe.id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className={`bg-white rounded-[16px] shadow-card hover:shadow-card-hover transition-all overflow-hidden cursor-pointer
-                  ${isLearned ? 'ring-2 ring-leaf/30' : ''}`}
-                onClick={() => setSelectedRecipe(recipe)}
-              >
-                <div className="p-4">
-                  <div className="flex items-start gap-3">
-                    {recipe.imageUrl && (
-                      <img
-                        src={recipe.imageUrl}
-                        alt={recipe.name}
-                        className="w-14 h-14 object-contain shrink-0"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-brown-dark leading-tight">
-                            {recipe.name}
-                          </h3>
-                          <p className="text-xs text-brown-light mt-0.5 truncate">
-                            {recipe.source || 'Unknown source'}
-                          </p>
-                        </div>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); onToggleLearned(recipe.id); }}
-                          className={`shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer
-                            ${isLearned ? 'border-leaf bg-leaf' : 'border-brown-light/30 hover:border-leaf/50'}`}
-                          title={isLearned ? 'Mark as not learned' : 'Mark as learned'}
-                        >
-                          {isLearned && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
-                        </button>
+        {visible.map((recipe) => {
+          const isLearned = learned.includes(recipe.id);
+          return (
+            <div
+              key={recipe.id}
+              className={`bg-white rounded-[16px] shadow-card hover:shadow-card-hover transition-all overflow-hidden cursor-pointer
+                ${isLearned ? 'ring-2 ring-leaf/30' : ''}`}
+              onClick={() => setSelectedRecipe(recipe)}
+            >
+              <div className="p-4">
+                <div className="flex items-start gap-3">
+                  {recipe.imageUrl && (
+                    <img
+                      src={recipe.imageUrl}
+                      alt={recipe.name}
+                      className="w-14 h-14 object-contain shrink-0"
+                      loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-bold text-brown-dark leading-tight">
+                          {recipe.name}
+                        </h3>
+                        <p className="text-xs text-brown-light mt-0.5 truncate">
+                          {recipe.source || 'Unknown source'}
+                        </p>
                       </div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onToggleLearned(recipe.id); }}
+                        className={`shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer
+                          ${isLearned ? 'border-leaf bg-leaf' : 'border-brown-light/30 hover:border-leaf/50'}`}
+                        title={isLearned ? 'Mark as not learned' : 'Mark as learned'}
+                      >
+                        {isLearned && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                      </button>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {recipe.materials.map((mat, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sand/50 text-[11px] font-semibold text-brown"
-                      >
-                        {mat.name} x{mat.quantity}
-                      </span>
-                    ))}
-                  </div>
-                  {recipe.sellPrice > 0 && (
-                    <p className="text-xs text-golden-dark font-semibold mt-2">
-                      Sells for {recipe.sellPrice.toLocaleString()} Bells
-                    </p>
-                  )}
                 </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {recipe.materials.map((mat, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sand/50 text-[11px] font-semibold text-brown"
+                    >
+                      {mat.name} x{mat.quantity}
+                    </span>
+                  ))}
+                </div>
+                {recipe.sellPrice > 0 && (
+                  <p className="text-xs text-golden-dark font-semibold mt-2">
+                    Sells for {recipe.sellPrice.toLocaleString()} Bells
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
+
+      {hasMore && (
+        <div className="text-center py-4">
+          <button
+            onClick={showMore}
+            className="px-6 py-2.5 rounded-xl bg-brown text-white font-bold text-sm hover:bg-brown-dark transition-colors cursor-pointer"
+          >
+            Show More ({filtered.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
 
       {filtered.length === 0 && (
         <div className="text-center py-12">

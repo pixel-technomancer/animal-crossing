@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import type { Creature, Hemisphere } from '../types/common';
 import { CreatureCard } from '../components/creatures/CreatureCard';
 import { CreatureDetail } from '../components/creatures/CreatureDetail';
@@ -58,21 +57,19 @@ export function CreaturePage({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((creature) => (
-            <CreatureCard
-              key={creature.id}
-              creature={creature}
-              hemisphere={hemisphere}
-              isCaught={caught.includes(creature['file-name'])}
-              isDonated={donated.includes(creature['file-name'])}
-              onToggleCaught={() => onToggleCaught(creature['file-name'])}
-              onToggleDonated={() => onToggleDonated(creature['file-name'])}
-              onClick={() => setSelectedCreature(creature)}
-              fallbackEmoji={fallbackEmoji}
-            />
-          ))}
-        </AnimatePresence>
+        {filtered.map((creature) => (
+          <CreatureCard
+            key={creature.id}
+            creature={creature}
+            hemisphere={hemisphere}
+            isCaught={caught.includes(creature['file-name'])}
+            isDonated={donated.includes(creature['file-name'])}
+            onToggleCaught={() => onToggleCaught(creature['file-name'])}
+            onToggleDonated={() => onToggleDonated(creature['file-name'])}
+            onClick={() => setSelectedCreature(creature)}
+            fallbackEmoji={fallbackEmoji}
+          />
+        ))}
       </div>
 
       {filtered.length === 0 && (

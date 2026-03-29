@@ -40,21 +40,16 @@ export function ArtPage({ art, caught, donated, onToggleCaught, onToggleDonated 
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((piece) => {
-            const id = piece['file-name'];
-            const pc = caught.includes(id);
-            const pd = donated.includes(id);
-            return (
-              <motion.div
-                key={id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className={`bg-white rounded-[16px] shadow-card hover:shadow-card-hover transition-all overflow-hidden
-                  ${pd ? 'ring-2 ring-teal/30' : ''}`}
-              >
+        {filtered.map((piece) => {
+          const id = piece['file-name'];
+          const pc = caught.includes(id);
+          const pd = donated.includes(id);
+          return (
+            <div
+              key={id}
+              className={`bg-white rounded-[16px] shadow-card hover:shadow-card-hover transition-all overflow-hidden
+                ${pd ? 'ring-2 ring-teal/30' : ''}`}
+            >
                 <div className="p-3 cursor-pointer" onClick={() => setSelectedArt(piece)}>
                   <div className="flex gap-1 mb-2 min-h-[20px]">
                     {piece.hasFake && <Badge variant="fake">Has Fake</Badge>}
@@ -106,10 +101,9 @@ export function ArtPage({ art, caught, donated, onToggleCaught, onToggleDonated 
                     Museum
                   </button>
                 </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+            </div>
+          );
+        })}
       </div>
 
       {filtered.length === 0 && (

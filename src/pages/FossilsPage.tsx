@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
 import type { Fossil } from '../types/common';
 import { SearchBar } from '../components/common/SearchBar';
@@ -50,16 +49,11 @@ export function FossilsPage({ fossils, caught, donated, onToggleCaught, onToggle
       </div>
 
       <div className="space-y-4">
-        <AnimatePresence mode="popLayout">
-          {grouped.map(([group, items]) => (
-            <motion.div
-              key={group}
-              layout
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="bg-white rounded-[16px] shadow-card p-4"
-            >
+        {grouped.map(([group, items]) => (
+          <div
+            key={group}
+            className="bg-white rounded-[16px] shadow-card p-4"
+          >
               {items.length > 1 && (
                 <h3 className="text-sm font-bold text-brown-dark mb-3 flex items-center gap-2">
                   {group}
@@ -117,9 +111,8 @@ export function FossilsPage({ fossils, caught, donated, onToggleCaught, onToggle
                   );
                 })}
               </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+          </div>
+        ))}
       </div>
 
       {filtered.length === 0 && (
