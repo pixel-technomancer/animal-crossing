@@ -9,6 +9,8 @@ interface HeaderProps {
   onDataImported: () => void;
 }
 
+const isElectron = navigator.userAgent.toLowerCase().includes('electron');
+
 export function Header({ onDataImported }: HeaderProps) {
   const [time, setTime] = useState(new Date());
   const [showSync, setShowSync] = useState(false);
@@ -27,7 +29,7 @@ export function Header({ onDataImported }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-sand-dark/30">
-      <div className="max-w-6xl mx-auto px-4 py-3 pl-20 flex items-center justify-between">
+      <div className={`max-w-6xl mx-auto px-4 py-3 flex items-center justify-between ${isElectron ? 'pl-20' : ''}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-leaf flex items-center justify-center shadow-card">
             <Leaf className="w-5 h-5 text-white" strokeWidth={2.5} />
