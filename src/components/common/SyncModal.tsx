@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Upload, Download, Check, Copy } from 'lucide-react';
 import { exportAllData, importAllData } from '../../utils/storage';
 
@@ -39,9 +40,9 @@ export function SyncModal({ onClose, onImported }: SyncModalProps) {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-[20px] shadow-xl w-full max-w-md p-6 relative mx-auto mt-16">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-[20px] shadow-xl w-full max-w-md p-6 relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1 rounded-full hover:bg-sand/30 transition-colors cursor-pointer"
@@ -131,6 +132,7 @@ export function SyncModal({ onClose, onImported }: SyncModalProps) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
